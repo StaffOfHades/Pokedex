@@ -1,9 +1,8 @@
 /* eslint-disable */
 import Vue from 'vue';
+import { AxiosStatic } from 'axios';
 
 declare module 'vue/types/vue' {
-  import { AxiosStatic } from 'axios';
-
   interface Vue {
     $axios: AxiosStatic;
   }
