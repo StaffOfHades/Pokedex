@@ -108,10 +108,16 @@ const actions: ActionTree<State, State> = {
   },
 };
 
-export default new Vuex.Store({
+export default new Vuex.Store<State>({
   state,
   getters,
   mutations,
   actions,
-  plugins: [createPersistedState()],
+  plugins: [
+    createPersistedState<State>({
+      reducer() {
+        return {};
+      },
+    }),
+  ],
 });
