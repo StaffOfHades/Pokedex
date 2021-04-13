@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex, { ActionTree, GetterTree, MutationTree } from 'vuex';
 import axios from 'axios';
+import createPersistedState from 'vuex-persistedstate';
 
 import {
   Actions,
