@@ -1,5 +1,13 @@
-declare module '*.vue' {
-  import Vue from 'vue';
+/* eslint-disable */
+import Vue from 'vue';
 
-  export default Vue;
+declare module 'vue/types/vue' {
+  import { AxiosStatic } from 'axios';
+
+  interface Vue {
+    $axios: AxiosStatic;
+  }
+  interface VueConstructor {
+    axios: AxiosStatic;
+  }
 }
