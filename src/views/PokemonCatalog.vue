@@ -13,6 +13,7 @@
       :page.sync="currentPage"
       :search="search"
       :sort-by.sync="sortBy"
+      @current-items="loadPokemonData"
     >
       <template v-slot:header>
         <v-text-field
@@ -27,18 +28,38 @@
         <v-row>
           <v-col v-for="pokemon in pokemons" :key="pokemon.name" cols="12" sm="6" md="4" lg="3">
             <v-card class="text-center">
+              <!-- The pokemon data might not be loaded, so use a placeholder if the sprites are not yet available. -->
+              <!-- Additionally, use the default sprite as placeholde to load the official artwork -->
               <v-img
                 class="mx-auto"
-                height="100px"
-                width="100px"
-                :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`"
-              />
+                height="400px"
+                width="400px"
+                :lazy-src="
+                  pokemon.sprites !== undefined
+                    ? pokemon.sprites.front_default || '/img/pokemon_placeholder.png'
+                    : '/img/pokemon_placeholder.png'
+                "
+                :src="
+                  pokemon.sprites !== undefined
+                    ? pokemon.sprites.other['official-artwork'].front_default ||
+                      pokemon.sprites.front_default ||
+                      undefined
+                    : undefined
+                "
+              >
+                <template v-slot:placeholder>
+                  <v-row class="fill-height ma-0" align="center" justify="center">
+                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                  </v-row>
+                </template>
+              </v-img>
 
               <v-card-title class="justify-center">
                 {{ pokemon.name }}
               </v-card-title>
 
-              <v-card-subtitle> #{{ pokemon.id }} </v-card-subtitle>
+              <v-card-subtitle v-if="pokemon.id !== undefined"> #{{ pokemon.id }} </v-card-subtitle>
+              <v-card-subtitle v-else> &nbsp; </v-card-subtitle>
             </v-card>
           </v-col>
         </v-row>
@@ -49,11 +70,13 @@
 
 <script lang="ts">
   import Vue from 'vue';
+  import { mapState } from 'vuex';
 
-  import { NamedAPIResource, NamedAPIResourceList } from '../store/types';
+  import { Actions, NamedAPIResource, Pokemon, State } from '../store/types';
 
-  interface PokemonResource extends NamedAPIResource {
-    id: string;
+  // Type guard to check if passed pokemon is in fact a pokemon
+  function isPokemon(pokemon: NamedAPIResource | Pokemon): pokemon is Pokemon {
+    return 'id' in pokemon;
   }
 
   export default Vue.extend({
@@ -61,11 +84,17 @@
     data: () => ({
       currentPage: 1,
       loading: false,
-      pokemons: [] as Array<PokemonResource>,
       pokemonsPerPage: 20,
       search: '',
       sortBy: 'name',
     }),
+    computed: {
+      ...mapState({
+        pokemons(state: State): Array<NamedAPIResource | Pokemon> {
+          return state.pokemons;
+        },
+      }),
+    },
     watch: {
       // If the search term becomes an empty string, make sure we are sorting by name as the default.
       search(newSearch) {
@@ -74,41 +103,33 @@
     },
     methods: {
       // Filter pokemons based of search term, which can either be a pokemon id or a pokemon name.
-      filterPokemons(items: Array<PokemonResource>, search: string): Array<PokemonResource> {
+      filterPokemons(
+        pokemons: Array<NamedAPIResource | Pokemon>,
+        search: string,
+      ): Array<NamedAPIResource | Pokemon> {
+        // Only search if valid term was passed.
+        if (search.trim().length === 0) return pokemons;
+
         // If the search term is not a number, filter by pokemon name.
         if (Number.isNaN(Number.parseInt(search, 10))) {
           this.sortBy = 'name';
-          return items.filter(({ name }) => name.includes(search));
+          return pokemons.filter(pokemon => pokemon.name.includes(search));
         }
         // Otherwise, filter by pokemon name & sort by id instead of name
-        this.sortBy = 'id';
-        return items.filter(({ id }) => id.toString().includes(search));
+        this.sortBy = pokemons.find(pokemon => isPokemon(pokemon)) !== undefined ? 'id' : 'name';
+        return pokemons.filter(pokemon =>
+          isPokemon(pokemon)
+            ? pokemon.id.toString().includes(search)
+            : pokemon.url.includes(search),
+        );
       },
-      // Retrieve all existing pokemon names & URls from server, using URL to save id for pokemon.
-      async loadPokemon() {
+      // Sends request to vuex to retrieve data for specified pokemon.
+      async loadPokemonData(pokemons: Array<NamedAPIResource | Pokemon>) {
         this.loading = true;
-        try {
-          const {
-            data: { results },
-          } = await this.$axios.get<NamedAPIResourceList>('https://pokeapi.co/api/v2/pokemon', {
-            params: { limit: 2000 },
-          });
-          this.pokemons = results.map(pokemon => {
-            const pokemonWithId = pokemon as PokemonResource;
-            // The pokemon URL always follows the format: https://pokeapi.co/api/v2/pokemon/1/.
-            // Therfore, we can always get the substrig for the pokemon that is its id.
-            pokemonWithId.id = pokemon.url.substring(34, pokemon.url.length - 1);
-            return pokemonWithId;
-          });
-        } catch (exception) {
-          console.error(exception);
-        }
+        await this.$store.dispatch({ pokemons, type: Actions.LoadPokemons });
+        console.log('pokemons updated');
         this.loading = false;
       },
-    },
-    // Once the vue instance is mounted, load pokemon from server.
-    mounted() {
-      this.loadPokemon();
     },
   });
 </script>

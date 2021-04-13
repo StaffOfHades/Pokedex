@@ -1,6 +1,21 @@
 /* eslint-disable camelcase */
+import { Store as BaseStore } from 'vuex';
 
 // Level 0 (No dependency)
+
+export enum Actions {
+  LoadInitialData = 'loadInitialData',
+  LoadPokemon = 'loadPokemon',
+  LoadPokemons = 'loadPokemons',
+  LoadPokemonsResourceList = 'loadPokemonsResourceList',
+}
+
+export enum Getters {}
+
+export enum Mutations {
+  SetPokemon = 'setPokemon',
+  SetPokemons = 'setPokemons',
+}
 
 export interface NamedAPIResource {
   name: string;
@@ -138,3 +153,13 @@ export interface Pokemon {
   types: Array<PokemonType>;
   weight: number;
 }
+
+// Level 4 (Dependency from level 3)
+
+export interface State {
+  pokemons: Array<NamedAPIResource | Pokemon>;
+}
+
+// Level 5 (Dependency from level 4)
+
+export type Store = BaseStore<State>;

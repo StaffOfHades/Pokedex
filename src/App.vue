@@ -39,6 +39,8 @@
   import Vue from 'vue';
   import PokemonCatalog from './views/PokemonCatalog.vue';
 
+  import { Actions } from './store/types';
+
   export default Vue.extend({
     name: 'App',
 
@@ -49,5 +51,9 @@
     data: () => ({
       //
     }),
+
+    mounted() {
+      this.$store.dispatch({ type: Actions.LoadInitialData });
+    },
   });
 </script>
