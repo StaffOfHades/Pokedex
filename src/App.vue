@@ -37,9 +37,10 @@
 
 <script lang="ts">
   import Vue from 'vue';
-  import PokemonCatalog from './views/PokemonCatalog.vue';
+  import { mapGetters } from 'vuex';
 
-  import { Actions } from './store/types';
+  import PokemonCatalog from './views/PokemonCatalog.vue';
+  import { Actions, Getters } from './store/types';
 
   export default Vue.extend({
     name: 'App',
@@ -52,8 +53,14 @@
       //
     }),
 
+    computed: {
+      ...mapGetters({
+        pokemons: Getters.PokemonsLength,
+      }),
+    },
+
     mounted() {
-      this.$store.dispatch({ type: Actions.LoadInitialData });
+      if (this.pokemons === 0) this.$store.dispatch({ type: Actions.LoadInitialData });
     },
   });
 </script>

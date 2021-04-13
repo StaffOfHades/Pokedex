@@ -5,6 +5,7 @@ import createPersistedState from 'vuex-persistedstate';
 
 import {
   Actions,
+  Getters,
   Mutations,
   NamedAPIResource,
   NamedAPIResourceList,
@@ -23,7 +24,16 @@ const state = (): State => ({
   pokemons: [],
 });
 
-const getters: GetterTree<State, State> = {};
+const getters: GetterTree<State, State> = {
+  // Return the number of pokemon data that where loaded in full
+  [Getters.NumberOfPokemonsLoaded]({ pokemons }): number {
+    return pokemons.filter(pokemon => isPokemon(pokemon)).length;
+  },
+  // Return the lengh of the pokemon array
+  [Getters.PokemonsLength]({ pokemons }): number {
+    return pokemons.length;
+  },
+};
 
 const mutations: MutationTree<State> = {
   /* eslint-disable no-param-reassign */

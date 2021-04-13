@@ -10,7 +10,10 @@ export enum Actions {
   LoadPokemonsResourceList = 'loadPokemonsResourceList',
 }
 
-export enum Getters {}
+export enum Getters {
+  NumberOfPokemonsLoaded = 'numberOfPokemonsLoaded',
+  PokemonsLength = 'pokemonsLength',
+}
 
 export enum Mutations {
   SetPokemon = 'setPokemon',
