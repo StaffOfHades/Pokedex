@@ -59,7 +59,7 @@
   export default Vue.extend({
     name: 'PokemonCatalog',
     data: () => ({
-      currentPage: 0,
+      currentPage: 1,
       loading: false,
       pokemons: [] as Array<PokemonResource>,
       pokemonsPerPage: 20,
