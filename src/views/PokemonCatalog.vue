@@ -50,20 +50,10 @@
 <script lang="ts">
   import Vue from 'vue';
 
-  interface NamedAPIResource {
-    name: string;
-    url: string;
-  }
+  import { NamedAPIResource, NamedAPIResourceList } from '../store/types';
 
-  interface NamedAPIResourceWithID extends NamedAPIResource {
+  interface PokemonResource extends NamedAPIResource {
     id: string;
-  }
-
-  interface NamedAPIResourceList {
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: Array<NamedAPIResource>;
   }
 
   export default Vue.extend({
@@ -71,7 +61,7 @@
     data: () => ({
       currentPage: 0,
       loading: false,
-      pokemons: [] as Array<NamedAPIResourceWithID>,
+      pokemons: [] as Array<PokemonResource>,
       pokemonsPerPage: 20,
       search: '',
       sortBy: 'name',
@@ -84,10 +74,7 @@
     },
     methods: {
       // Filter pokemons based of search term, which can either be a pokemon id or a pokemon name.
-      filterPokemons(
-        items: Array<NamedAPIResourceWithID>,
-        search: string,
-      ): Array<NamedAPIResourceWithID> {
+      filterPokemons(items: Array<PokemonResource>, search: string): Array<PokemonResource> {
         // If the search term is not a number, filter by pokemon name.
         if (Number.isNaN(Number.parseInt(search, 10))) {
           this.sortBy = 'name';
@@ -107,7 +94,7 @@
             params: { limit: 2000 },
           });
           this.pokemons = results.map(pokemon => {
-            const pokemonWithId = pokemon as NamedAPIResourceWithID;
+            const pokemonWithId = pokemon as PokemonResource;
             // The pokemon URL always follows the format: https://pokeapi.co/api/v2/pokemon/1/.
             // Therfore, we can always get the substrig for the pokemon that is its id.
             pokemonWithId.id = pokemon.url.substring(34, pokemon.url.length - 1);
