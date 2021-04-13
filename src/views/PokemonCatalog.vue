@@ -13,7 +13,7 @@
       :page.sync="currentPage"
       :search="search"
       :sort-by.sync="sortBy"
-      @current-items="loadPokemonData"
+      @current-items="loadPokemonDataDebounced"
     >
       <template v-slot:header>
         <v-text-field
@@ -70,6 +70,7 @@
 
 <script lang="ts">
   import Vue from 'vue';
+  import { debounce } from 'lodash';
   import { mapState } from 'vuex';
 
   import { Actions, NamedAPIResource, Pokemon, State } from '../store/types';
@@ -130,6 +131,13 @@
         console.log('pokemons updated');
         this.loading = false;
       },
+      loadPokemonDataDebounced: debounce(function (
+        this: { loadPokemonData(pokemons: Array<NamedAPIResource | Pokemon>): void },
+        pokemons: Array<NamedAPIResource | Pokemon>,
+      ) {
+        this.loadPokemonData(pokemons);
+      },
+      400),
     },
   });
 </script>
