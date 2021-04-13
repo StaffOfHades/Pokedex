@@ -30,20 +30,20 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld />
+      <PokemonCatalog />
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
-  import HelloWorld from './components/HelloWorld.vue';
+  import PokemonCatalog from './views/PokemonCatalog.vue';
 
   export default Vue.extend({
     name: 'App',
 
     components: {
-      HelloWorld,
+      PokemonCatalog,
     },
 
     data: () => ({
