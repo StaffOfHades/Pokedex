@@ -98,12 +98,12 @@ export interface TypePokemon {
 }
 
 export interface TypeRelations {
-  double_damage_to: NamedAPIResource; // Type
-  double_damage_from: NamedAPIResource; // Type
-  half_damage_from: NamedAPIResource; // Type
-  half_damage_to: NamedAPIResource; // Type
-  no_damage_from: NamedAPIResource; // Type
-  no_damage_to: NamedAPIResource; // Type
+  double_damage_to: Array<NamedAPIResource>; // Type
+  double_damage_from: Array<NamedAPIResource>; // Type
+  half_damage_from: Array<NamedAPIResource>; // Type
+  half_damage_to: Array<NamedAPIResource>; // Type
+  no_damage_from: Array<NamedAPIResource>; // Type
+  no_damage_to: Array<NamedAPIResource>; // Type
 }
 
 export interface VersionGameIndex {
@@ -124,7 +124,7 @@ export interface PokemonMove {
 }
 
 export interface Type {
-  damage_relations: number;
+  damage_relations: TypeRelations;
   game_indices: Array<GenerationGameIndex>;
   generation: NamedAPIResource; // Generation
   id: number;
