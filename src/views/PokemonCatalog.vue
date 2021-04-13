@@ -128,7 +128,6 @@
       async loadPokemonData(pokemons: Array<NamedAPIResource | Pokemon>) {
         this.loading = true;
         await this.$store.dispatch({ pokemons, type: Actions.LoadPokemons });
-        console.log('pokemons updated');
         this.loading = false;
       },
       loadPokemonDataDebounced: debounce(function (
