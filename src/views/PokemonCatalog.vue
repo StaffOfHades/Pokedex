@@ -111,12 +111,6 @@
         },
       }),
     },
-    watch: {
-      // If the search term becomes an empty string, make sure we are sorting by name as the default.
-      search(newSearch) {
-        if (newSearch.trim().length === 0) this.sortBy = 'name';
-      },
-    },
     methods: {
       // Filter pokemons based of search term, which can either be a pokemon id or a pokemon name.
       filterPokemons(
@@ -128,15 +122,13 @@
 
         // If the search term is not a number, filter by pokemon name.
         if (Number.isNaN(Number.parseInt(search, 10))) {
-          this.sortBy = 'name';
           return pokemons.filter(pokemon => pokemon.name.includes(search));
         }
-        // Otherwise, filter by pokemon name & sort by id instead of name
-        this.sortBy = pokemons.find(pokemon => isPokemon(pokemon)) !== undefined ? 'id' : 'name';
+        // Otherwise, filter by pokemon id
         return pokemons.filter(pokemon =>
           isPokemon(pokemon)
-            ? pokemon.id.toString().includes(search)
-            : pokemon.url.includes(search),
+            ? pokemon.id.toString() === search
+            : pokemon.url.includes(`/${search}/`),
         );
       },
       // Sends request to vuex to retrieve data for specified pokemon.
