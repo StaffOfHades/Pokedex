@@ -30,7 +30,7 @@
     </v-app-bar>
 
     <v-main>
-      <PokemonCatalog />
+      <router-view />
     </v-main>
   </v-app>
 </template>
@@ -39,15 +39,10 @@
   import Vue from 'vue';
   import { mapGetters } from 'vuex';
 
-  import PokemonCatalog from './views/PokemonCatalog.vue';
   import { Actions, Getters } from './store/types';
 
   export default Vue.extend({
     name: 'App',
-
-    components: {
-      PokemonCatalog,
-    },
 
     data: () => ({
       //
