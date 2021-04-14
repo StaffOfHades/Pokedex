@@ -42,6 +42,33 @@
       <v-card-text v-else class="text-center">
         <v-chip class="ma-2" label style="visibility: hidden"> &nbsp; </v-chip>
       </v-card-text>
+
+      <v-divider class="mx-4"></v-divider>
+
+      <v-card-title class="justify-center"> estadísticas </v-card-title>
+      <v-card-subtitle class="justify-center">
+        valor máximo nivel 1 - valor mínimo nivel 100
+      </v-card-subtitle>
+
+      <v-card-text v-for="stat in stats" :key="stat.stat.name" class="text-center">
+        <label class="v-label theme--light mb-12 mb-sm-12 mb-md-0 d-block">{{
+          stat.stat.name
+        }}</label>
+        <v-range-slider
+          thumb-label="always"
+          readonly
+          :min="stat.rangeMinLevel[0]"
+          :max="stat.rangeMaxLevel[1]"
+          :value="[stat.rangeMinLevel[1], stat.rangeMaxLevel[0]]"
+        >
+          <template v-slot:prepend>
+            {{ stat.rangeMinLevel[0] }}
+          </template>
+          <template v-slot:append>
+            {{ stat.rangeMaxLevel[1] }}
+          </template>
+        </v-range-slider>
+      </v-card-text>
     </v-card>
   </v-container>
 </template>
@@ -52,6 +79,23 @@
 
   import { Actions, Getters, NamedAPIResource, Pokemon, State } from '../store/types';
 
+  interface CalculateHPConfig {
+    base: number;
+    effort: number;
+    individual: number;
+    level: number;
+  }
+
+  interface CalculateStatConfig extends CalculateHPConfig {
+    nature: number;
+  }
+
+  interface PokemonStatRange {
+    rangeMinLevel: [number, number];
+    rangeMaxLevel: [number, number];
+    stat: NamedAPIResource; // Stat
+  }
+
   // Type guard to check if passed pokemon is in fact a pokemon
   function isPokemon(pokemon: NamedAPIResource | Pokemon): pokemon is Pokemon {
     return 'id' in pokemon;
@@ -61,13 +105,68 @@
     name: 'PokemonEntry',
     data: () => ({ loading: true }),
     computed: {
+      // Convert the route params id to number & expose
       id(): number {
         return Number.parseInt(this.$route.params.id, 10);
       },
+      // Attempt to find the pokemon data matching the passed id
       pokemon(): NamedAPIResource | Pokemon | undefined {
         return this.pokemons.find(pokemon => {
+          // Compare to find pokemon using appropiate function depending on type
           if (isPokemon(pokemon)) return pokemon.id === this.id;
           return pokemon.url.includes(`/${this.id}`);
+        });
+      },
+      // Calculate pokemon state ranges from existing stats
+      stats(): Array<PokemonStatRange> {
+        // Only try to calculate state for a pokemon that exists & has defined stats.
+        if (this.pokemon === undefined || !isPokemon(this.pokemon)) return [];
+        return this.pokemon.stats.map(({ base_stat: base, effort, stat }) => {
+          let maxStatMaxLevel = 0;
+          let maxStatMinLevel = 0;
+          let minStatMaxLevel = 0;
+          let minStatMinLevel = 0;
+          // If stat is HP, calculate with differnet formula
+          if (stat.name === 'hp') {
+            maxStatMaxLevel = this.calculateHp({ base, effort: 255, individual: 15, level: 100 });
+            maxStatMinLevel = this.calculateHp({ base, effort: 255, individual: 15, level: 1 });
+            minStatMaxLevel = this.calculateHp({ base, effort, individual: 0, level: 100 });
+            minStatMinLevel = this.calculateHp({ base, effort, individual: 0, level: 1 });
+          } else {
+            maxStatMaxLevel = this.calculateStat({
+              base,
+              effort: 255,
+              individual: 15,
+              level: 100,
+              nature: 1.1,
+            });
+            maxStatMinLevel = this.calculateStat({
+              base,
+              effort: 255,
+              individual: 15,
+              level: 1,
+              nature: 1.1,
+            });
+            minStatMaxLevel = this.calculateStat({
+              base,
+              effort,
+              individual: 0,
+              level: 100,
+              nature: 0.9,
+            });
+            minStatMinLevel = this.calculateStat({
+              base,
+              effort,
+              individual: 0,
+              level: 1,
+              nature: 0.9,
+            });
+          }
+          return {
+            rangeMinLevel: [minStatMinLevel, maxStatMinLevel],
+            rangeMaxLevel: [minStatMaxLevel, maxStatMaxLevel],
+            stat,
+          };
         });
       },
       ...mapState({
@@ -80,6 +179,8 @@
       }),
     },
     watch: {
+      // Watch pokemons length to try to load the pokemon data
+      // if pokemons catalog was intialized after this view was first loaded.
       pokemonsLength(newLength: number, oldLength: number) {
         if (oldLength === 0 && newLength > 0)
           this.loadPokemonData().then(() => {
@@ -95,7 +196,21 @@
         await this.$store.dispatch({ url: this.pokemon.url, type: Actions.LoadPokemon });
         this.loading = false;
       },
+      // Calculate HP using formula for gen 3 & up
+      calculateHp({ base, effort, individual, level }: CalculateHPConfig) {
+        return (
+          Math.floor(((2 * base + individual + Math.floor(effort / 4)) * level) / 100) + level + 10
+        );
+      },
+      // Calculate Stats (apart from HP) using formula for gen 3 & up.
+      calculateStat({ base, effort, individual, level, nature }: CalculateStatConfig) {
+        return Math.floor(
+          (Math.floor(((2 * base + individual + Math.floor(effort / 4)) * level) / 100) + 5) *
+            nature,
+        );
+      },
     },
+    // Try to load the pokemon data on start.
     mounted() {
       this.loadPokemonData().then(() => {
         this.loading = false;
