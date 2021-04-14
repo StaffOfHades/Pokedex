@@ -1,30 +1,30 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="deep-orange lighten-1" dark>
       <div class="d-flex align-center">
         <v-img
-          alt="Vuetify Logo"
+          alt="Pokedex Logo"
           class="shrink mr-2"
           contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          src="https://cdn6.aptoide.com/imgs/a/6/b/a6b8538c4c6e2fd78e191d9659878e9e_icon.png"
           transition="scale-transition"
           width="40"
         />
 
         <v-img
-          alt="Vuetify Name"
+          alt="PokeAPI Name"
           class="shrink mt-1 hidden-sm-and-down"
           contain
           min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          src="/img/pokeapi_logo.png"
           width="100"
         />
       </div>
 
       <v-spacer></v-spacer>
 
-      <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
-        <span class="mr-2">Latest Release</span>
+      <v-btn href="https://pokeapi.co/" target="_blank" text>
+        <span class="mr-2">API</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
