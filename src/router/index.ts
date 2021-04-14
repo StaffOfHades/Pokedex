@@ -10,6 +10,14 @@ const routes: Array<RouteConfig> = [
     name: 'Catalog',
     component: PokemonCatalog,
   },
+  {
+    path: '/pokemon/:id',
+    name: 'Entry',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/PokemonEntry.vue'),
+  },
 ];
 
 const router = new VueRouter({
