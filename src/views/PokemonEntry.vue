@@ -5,8 +5,8 @@
         class="mb-4 d-inline-flex d-sm-none d-md-none d-lg-none d-xl-none"
         color="grey darken-2"
         dark
-        href="/"
         style="left: 16px; top: 16px"
+        to="/"
       >
         <v-icon dark left> mdi-arrow-left </v-icon>Back
       </v-btn>
@@ -15,8 +15,8 @@
         class="d-none d-sm-inline-flex d-md-inline-flex d-lg-inline-flex d-xl-inline-flex"
         color="grey darken-2"
         dark
-        href="/"
         left
+        to="/"
         top
       >
         <v-icon dark left> mdi-arrow-left </v-icon>Back
