@@ -27,7 +27,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn class="mr-4" icon to="profile">
+      <v-btn class="mr-4" icon to="/profile">
         Perfil
         <v-icon>mdi-account</v-icon>
       </v-btn>
