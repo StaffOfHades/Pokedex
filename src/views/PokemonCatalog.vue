@@ -38,8 +38,8 @@
               <!-- Additionally, use the default sprite as placeholde to load the official artwork -->
               <v-img
                 class="mx-auto"
-                height="400px"
-                width="400px"
+                max-height="400px"
+                max-width="400px"
                 :lazy-src="
                   pokemon.sprites !== undefined
                     ? pokemon.sprites.front_default || '/img/pokemon_placeholder.png'
