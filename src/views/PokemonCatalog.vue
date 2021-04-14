@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
     <v-data-iterator
+      single-select
       :custom-filter="filterPokemons"
       :items="pokemons"
       :items-per-page.sync="pokemonsPerPage"
@@ -14,6 +15,7 @@
       :search="search"
       :sort-by.sync="sortBy"
       @current-items="loadPokemonDataDebounced"
+      @item-selected="pokemonSelected"
     >
       <template v-slot:header>
         <v-text-field
@@ -24,10 +26,14 @@
         />
       </template>
 
-      <template v-slot:default="{ items: pokemons }">
+      <template v-slot:default="{ isSelected, items: pokemons, select }">
         <v-row>
           <v-col v-for="pokemon in pokemons" :key="pokemon.name" cols="12" sm="6" md="4" lg="3">
-            <v-card class="text-center">
+            <v-card
+              class="text-center"
+              :outlined="isSelected(pokemon)"
+              @click="select(pokemon.id !== undefined ? pokemon : undefined)"
+            >
               <!-- The pokemon data might not be loaded, so use a placeholder if the sprites are not yet available. -->
               <!-- Additionally, use the default sprite as placeholde to load the official artwork -->
               <v-img
@@ -49,7 +55,7 @@
               >
                 <template v-slot:placeholder>
                   <v-row class="fill-height ma-0" align="center" justify="center">
-                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                    <v-progress-circular indeterminate color="grey lighten-2"></v-progress-circular>
                   </v-row>
                 </template>
               </v-img>
@@ -139,13 +145,18 @@
         await this.$store.dispatch({ pokemons, type: Actions.LoadPokemons });
         this.loading = false;
       },
-      loadPokemonDataDebounced: debounce(function (
+      // Debounce loadPokemonData function by 400 seconds to prevent multiple calls in sequence
+      loadPokemonDataDebounced: debounce(function debounceLoadPokemonData(
         this: { loadPokemonData(pokemons: Array<NamedAPIResource | Pokemon>): void },
         pokemons: Array<NamedAPIResource | Pokemon>,
       ) {
         this.loadPokemonData(pokemons);
       },
       400),
+      pokemonSelected({ item: { id }, value }: { item: Pokemon; value: boolean }) {
+        if (this.loading || value === false) return;
+        this.$router.push({ name: 'Entry', params: { id: id.toString() } });
+      },
     },
   });
 </script>
