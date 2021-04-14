@@ -14,9 +14,17 @@ const routes: Array<RouteConfig> = [
     path: '/pokemon/:id',
     name: 'Entry',
     // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
+    // this generates a separate chunk (entry.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/PokemonEntry.vue'),
+    component: () => import(/* webpackChunkName: "entry" */ '../views/PokemonEntry.vue'),
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    // route level code-splitting
+    // this generates a separate chunk (profile.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "profile" */ '../views/ProfileView.vue'),
   },
 ];
 
