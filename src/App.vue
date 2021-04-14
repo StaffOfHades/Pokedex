@@ -9,6 +9,8 @@
           src="https://cdn6.aptoide.com/imgs/a/6/b/a6b8538c4c6e2fd78e191d9659878e9e_icon.png"
           transition="scale-transition"
           width="40"
+          style="cursor: pointer"
+          @click="$router.push('/')"
         />
 
         <v-img
@@ -18,10 +20,17 @@
           min-width="100"
           src="/img/pokeapi_logo.png"
           width="100"
+          style="cursor: pointer"
+          @click="$router.push('/')"
         />
       </div>
 
       <v-spacer></v-spacer>
+
+      <v-btn class="mr-4" icon to="profile">
+        Perfil
+        <v-icon>mdi-account</v-icon>
+      </v-btn>
 
       <v-btn href="https://pokeapi.co/" target="_blank" text>
         <span class="mr-2">API</span>
