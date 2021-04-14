@@ -70,6 +70,18 @@
         </v-range-slider>
       </v-card-text>
     </v-card>
+    <v-card v-else class="text-center">
+      <v-img
+        class="mx-auto"
+        max-height="400px"
+        max-width="400px"
+        src="/img/pokemon_placeholder.png
+        "
+      >
+      </v-img>
+
+      <v-card-title class="justify-center"> este pokemon no existe </v-card-title>
+    </v-card>
   </v-container>
 </template>
 
