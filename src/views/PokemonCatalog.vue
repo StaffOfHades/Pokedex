@@ -67,14 +67,14 @@
               <v-card-subtitle v-if="pokemon.id !== undefined"> #{{ pokemon.id }} </v-card-subtitle>
               <v-card-subtitle v-else> &nbsp; </v-card-subtitle>
 
-              <div v-if="pokemon.types !== undefined" class="text-center">
+              <v-card-text v-if="pokemon.types !== undefined" class="text-center">
                 <v-chip v-for="type in pokemon.types" :key="type.slot" class="ma-2" label>
                   {{ type.type.name }}
                 </v-chip>
-              </div>
-              <div v-else class="text-center">
+              </v-card-text>
+              <v-card-text v-else class="text-center">
                 <v-chip class="ma-2" label style="visibility: hidden"> &nbsp; </v-chip>
-              </div>
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
